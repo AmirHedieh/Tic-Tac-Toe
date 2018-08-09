@@ -1,9 +1,14 @@
 package com.example.amas.tic_tac_toe;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Layout;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class GameActivity extends AppCompatActivity {
@@ -16,6 +21,9 @@ public class GameActivity extends AppCompatActivity {
 
     private int round = 1;
     private int winner = -1;
+
+    private Boolean gameOver = false;
+
     int cells[] = {NOT_USED_CELL,NOT_USED_CELL,NOT_USED_CELL,
                    NOT_USED_CELL,NOT_USED_CELL,NOT_USED_CELL,
                    NOT_USED_CELL,NOT_USED_CELL,NOT_USED_CELL};
@@ -25,10 +33,42 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.game_screen);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem item = menu.add("Restart");
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                for(int i = 0 ; i < cells.length ; i++){
+                    cells[i] = NOT_USED_CELL;
+                }
+                LinearLayout layout = findViewById(R.id.game_screen);
+                for(int i = 0 ; i  < layout.getChildCount() ; i++){
+                    LinearLayout row = (LinearLayout)layout.getChildAt(i);
+                    for(int j = 0 ; j < row.getChildCount() ; j++){
+                        ImageView iv = (ImageView) row.getChildAt(j);
+                        iv.setImageResource(R.drawable.emptycell);
+                    }
+                }
+                round = 1;
+                gameOver = false;
+                winner = -1;
+
+                return false;
+            }
+        });
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
     public void gameTick(View view){
-        fillCell(view);
-        if(checkEnd()){
-            showEnding();
+        if(!gameOver) {
+            fillCell(view);
+            if (checkEnd()) {
+                showEnding();
+                gameOver = true;
+            }
         }
     }
 
